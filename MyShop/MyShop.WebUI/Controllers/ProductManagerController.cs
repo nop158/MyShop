@@ -7,6 +7,7 @@ using MyShop.Core.Models;
 using MyShop.DataAccess.InMemory;
 using MyShop.Core.ViewModels;
 using MyShop.Core.Contract;
+using System.IO;
 
 namespace MyShop.WebUI.Controllers
 {
@@ -34,7 +35,7 @@ namespace MyShop.WebUI.Controllers
             return View(ViewModel);
         }
         [HttpPost]
-        public ActionResult Create(Product product)
+        public ActionResult Create(Product product, HttpPostedFileBase file)
         {
             if (!ModelState.IsValid)
             {
@@ -42,6 +43,11 @@ namespace MyShop.WebUI.Controllers
             }
             else
             {
+                if (file != null)
+                {
+                    product.Image = product.Id + Path.GetExtension(file.FileName);
+                    file.SaveAs(Server.MapPath("//Content//ProductImages//") + product.Image);
+                }
                 context.Insert(product);
                 context.Commit();
                 return RedirectToAction("Index");
@@ -66,7 +72,7 @@ namespace MyShop.WebUI.Controllers
 
         }
         [HttpPost]
-        public ActionResult Edit(Product product, string Id)
+        public ActionResult Edit(Product product, string Id, HttpPostedFileBase file)
         {
             Product productEdit = context.Find(Id);
             if (productEdit == null)
@@ -78,11 +84,18 @@ namespace MyShop.WebUI.Controllers
             {
                 return View(product);
             }
+            if (file != null)
+            {
+                productEdit.Image = product.Id + Path.GetExtension(file.FileName);
+                file.SaveAs(Server.MapPath("//Content//ProductImages//") + productEdit.Image);
+            }
             productEdit.Category = product.Category;
             productEdit.Price = product.Price;
             productEdit.Description = product.Description;
             productEdit.Name = product.Name;
-            productEdit.Image = product.Image;
+            //productEdit.Image = "e05ddcd9-532e-4cdb-90f8-71a54937ac28.jpg";
+            context.Update(productEdit);
+            context.Commit();
 
             return RedirectToAction("Index");
         }

@@ -71,6 +71,8 @@ namespace MyShop.WebUI.Controllers
                 return View(product);
             }
             productEdit.Category = product.Category;
+            context.Update(productEdit);
+            context.Commit();
             return RedirectToAction("Index");
         }
 

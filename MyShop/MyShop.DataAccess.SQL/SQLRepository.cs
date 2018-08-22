@@ -13,10 +13,10 @@ namespace MyShop.DataAccess.SQL
     {
         internal DataContext context;
         internal DbSet<T> dbSet;
-        public SQLRepository(DataContext contexts)
+        public SQLRepository(DataContext context)
         {
-            this.context = contexts;
-            this.dbSet = contexts.Set<T>();
+            this.context = context;
+            this.dbSet = context.Set<T>();
         }
         public IQueryable<T> Collection()
         {
